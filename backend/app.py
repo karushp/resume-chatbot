@@ -6,25 +6,18 @@ import PyPDF2
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from huggingface_hub import InferenceClient
 
 from dotenv import load_dotenv
 load_dotenv()
 
-# Load Hugging Face API token from environment
-HF_API_TOKEN = os.getenv("HF_API_TOKEN")
-if not HF_API_TOKEN:
-    raise ValueError("Please set the HF_API_TOKEN environment variable.")
+# Load Groq API key from environment
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise ValueError("Please set the GROQ_API_KEY environment variable.")
 
 # Configuration
 PERSON_NAME = "Karush Pradhan"  # Change this to the person's name
 RESUME_FILE = "data/karush_resume.pdf"  # Change this to your resume file
-
-# Initialize Hugging Face client with featherless-ai provider
-client = InferenceClient(
-    provider="featherless-ai",
-    api_key=HF_API_TOKEN,
-)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -44,12 +37,16 @@ chunks = splitter.split_text(text)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 db = FAISS.from_texts(chunks, embeddings)
 
-# --- Step 4: Helper function to call Hugging Face API ---
-def hf_generate(query, context):
+# --- Step 4: Helper function to call Groq API ---
+def groq_generate(query, context):
     try:
-        completion = client.chat.completions.create(
-            model="mistralai/Mistral-7B-Instruct-v0.2",
-            messages=[
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "messages": [
                 {
                     "role": "system",
                     "content": f"You are Karush's personal assistant. Answer questions naturally and conversationally about Karush based on this resume information: {context}. Respond as if you're speaking directly to the person asking, without starting with 'KP' or 'Karush' unless specifically asked about him by name."
@@ -59,10 +56,25 @@ def hf_generate(query, context):
                     "content": query
                 }
             ],
+            "model": "llama-3.1-8b-instant",
+            "temperature": 0.7,
+            "max_tokens": 1000
+        }
+        
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers=headers,
+            json=data
         )
-        return completion.choices[0].message.content
+        
+        if response.status_code == 200:
+            result = response.json()
+            return result["choices"][0]["message"]["content"]
+        else:
+            return f"⚠️ Error from Groq API: {response.status_code} - {response.text}"
+            
     except Exception as e:
-        return f"⚠️ Error from Hugging Face API: {str(e)}"
+        return f"⚠️ Error from Groq API: {str(e)}"
 
 # --- Step 5: API Endpoint ---
 @app.route("/ask", methods=["POST"])
@@ -70,7 +82,7 @@ def ask():
     query = request.json["query"]
     docs = db.similarity_search(query, k=2)
     context = " ".join([d.page_content for d in docs])
-    answer = hf_generate(query, context)
+    answer = groq_generate(query, context)
     return jsonify({"answer": answer})
 
 if __name__ == "__main__":
