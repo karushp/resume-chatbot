@@ -2,13 +2,31 @@
 <html>
 <head>
   <title>Resume Chatbot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>🤖 Resume Chatbot</h2>
-  <div id="chat"></div>
-  <input type="text" id="userInput" placeholder="Ask me about KP's resume...">
-  <button onclick="sendMessage()">Send</button>
+  <div class="container">
+    <h1 class="main-title">Hi, I'm Karush 👋</h1>
+        <p class="tagline">actually his bot 🤖 </p>
+    
+    <div class="input-container">
+      <input type="text" id="userInput" placeholder="Try asking: What projects has Karush worked on?" onkeypress="handleKeyPress(event)">
+      <button class="send-btn" onclick="sendMessage()">
+        <span class="send-icon">↑</span>
+      </button>
+    </div>
+    
+    <div id="chat" class="chat-container"></div>
+    
+    <p class="tagline">Last updated: October 2025 | <a href="https://github.com/karushp" target="_blank">Github</a></p>
+  </div>
+
+  <!-- Hidden avatar images -->
+  <img id="bot-avatar" src="photo.jpeg" alt="Bot" style="display: none;">
+  <div id="user-avatar" style="display: none;"></div>
 
   <script src="script.js"></script>
 </body>
