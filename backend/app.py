@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 # --- Load resume + build FAISS DB ---
 text = ""
-with open("resume.pdf", "rb") as f:
+with open("data/karush_resume.pdf", "rb") as f:
     reader = PyPDF2.PdfReader(f)
     for page in reader.pages:
         text += page.extract_text()
@@ -24,7 +24,7 @@ def ask():
     query = request.json["query"]
     docs = db.similarity_search(query, k=2)
     context = " ".join([d.page_content for d in docs])
-    
+
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
