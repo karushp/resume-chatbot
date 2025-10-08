@@ -38,7 +38,10 @@ splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=30)
 chunks = splitter.split_text(text)
 
 # --- Step 3: Embed chunks and store in FAISS ---
-embeddings = CohereEmbeddings(cohere_api_key=COHERE_API_KEY)
+embeddings = CohereEmbeddings(
+    cohere_api_key=COHERE_API_KEY,
+    model="embed-english-v3.0"
+)
 db = FAISS.from_texts(chunks, embeddings)
 
 # --- Step 4: Helper function to call Groq API ---
