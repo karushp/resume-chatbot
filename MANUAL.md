@@ -18,33 +18,34 @@ The Resume Chatbot is a **RAG (Retrieval-Augmented Generation)** system that all
 
 ### Key Features:
 - **PDF Resume Processing**: Extracts text from PDF files
-- **Semantic Search**: Uses AI embeddings to find relevant information
-- **Conversational AI**: Generates natural responses using Groq's Llama model
-- **Modern UI**: Clean, responsive chat interface
-- **Real-time Interaction**: Instant responses with loading indicators
+- **Semantic Search**: Uses Cohere embeddings to find relevant information
+- **Conversational AI**: Generates natural, engaging responses using Groq's Llama model
+- **Modern UI**: Clean, responsive chat interface with loading animations
+- **Memory Optimized**: Uses external APIs instead of local models
+- **Real-time Interaction**: Instant responses with smooth UX
 
 ---
 
 ## 🏗️ Architecture Diagram
 
 ```
-┌─────────────────┐    HTTP Request    ┌─────────────────┐
+┌─────────────────┐    HTTP Request     ┌─────────────────┐
 │   Frontend      │ ──────────────────► │   Backend       │
-│   (GitHub Pages)│                     │   (Fly.io)      │
+│   (GitHub Pages)│                     │   (Render)      │
 │                 │                     │                 │
 │ • HTML/CSS/JS   │ ◄────────────────── │ • Flask API     │
 │ • User Interface│    JSON Response    │ • PDF Processing│
-│ • Chat UI       │                     │ • AI Embeddings │
+│ • Chat UI       │                     │ • Vector Search │
 └─────────────────┘                     │ • Vector Search │
                                         │ • Groq API      │
                                         └─────────────────┘
                                                       │
                                                       ▼
                                             ┌─────────────────┐
-                                            │   External APIs  │
+                                            │   External APIs │
                                             │                 │
                                             │ • Groq API      │
-                                            │ • Hugging Face   │
+                                            │ • Cohere        │
                                             │   Embeddings    │
                                             └─────────────────┘
 ```
@@ -95,17 +96,20 @@ with open(RESUME_FILE, "rb") as f:
 
 ```python
 # 2. Text Chunking
-splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=30)
 chunks = splitter.split_text(text)
 ```
 **Purpose**: Split long text into manageable pieces for AI processing
 
 ```python
 # 3. Create Embeddings & Vector Store
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v2")
+embeddings = CohereEmbeddings(
+    cohere_api_key=COHERE_API_KEY,
+    model="embed-english-v3.0"
+)
 db = FAISS.from_texts(chunks, embeddings)
 ```
-**Purpose**: Convert text chunks into numerical vectors for semantic search
+**Purpose**: Convert text chunks into numerical vectors using Cohere API (no local model loading)
 
 ### **Query Processing (Lines 80-86):**
 
@@ -128,7 +132,7 @@ def groq_generate(query, context):
         "messages": [
             {
                 "role": "system",
-                "content": f"You are Karush's personal assistant. Answer questions naturally and conversationally about Karush based on this resume information: {context}."
+                "content": f"You are Karush's friendly chatbot assistant. Be conversational, engaging, and helpful when answering questions about Karush based on this resume information: {context}. \n\nGuidelines:\n- Keep responses concise and natural, like you're chatting with a friend\n- Use bullet points or short paragraphs to break up information\n- Ask follow-up questions when appropriate\n- Be enthusiastic but not overly formal\n- If someone asks about hiring, be humble but confident\n- Use casual language like 'I've got', 'I'm really into', 'I love working with'\n- Don't start responses with 'Karush' unless specifically asked about him by name\n- Make it feel like a real conversation, not a formal interview"
             },
             {
                 "role": "user", 
@@ -136,8 +140,8 @@ def groq_generate(query, context):
             }
         ],
         "model": "llama-3.1-8b-instant",
-        "temperature": 0.7,
-        "max_tokens": 1000
+        "temperature": 0.8,
+        "max_tokens": 800
     }
     
     # 2. Send request to Groq API
@@ -201,7 +205,7 @@ chat.innerHTML += `
 
 #### **Step 4: API Call (Lines 45-50):**
 ```javascript
-const response = await fetch("https://resume-chatbot-tpm0.onrender.com", {
+const response = await fetch("https://resume-chatbot-162o.onrender.com/ask", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query: userMessage })
@@ -299,7 +303,7 @@ catch (error) {
 - **Flask**: Web framework for API endpoints
 - **PyPDF2**: PDF text extraction
 - **LangChain**: Text processing and chunking
-- **Hugging Face Embeddings**: Convert text to vectors
+- **Cohere Embeddings**: Convert text to vectors via API
 - **FAISS**: Vector similarity search
 - **Groq API**: AI response generation
 - **Flask-CORS**: Handle cross-origin requests
@@ -313,9 +317,9 @@ catch (error) {
 
 ### **External Services:**
 - **Groq API**: Fast AI inference (Llama 3.1 8B)
-- **Hugging Face**: Pre-trained embedding models
+- **Cohere API**: High-quality embeddings (free tier: 1000 requests/month)
 - **GitHub Pages**: Static frontend hosting
-- **Fly.io/Render**: Backend hosting
+- **Render**: Backend hosting (512MB free tier)
 
 ---
 
@@ -329,17 +333,19 @@ Source: /frontend directory
 URL: https://karushp.github.io/resume-chatbot
 ```
 
-### **Backend (Fly.io/Render):**
+### **Backend (Render):**
 ```
-Platform: Fly.io (or Render)
-Service: resume-chatbot-backend
-URL: https://resume-chatbot-backend.fly.dev
-Environment Variables: GROQ_API_KEY
+Platform: Render
+Service: resume-chatbot-162o
+URL: https://resume-chatbot-162o.onrender.com
+Environment Variables: GROQ_API_KEY, COHERE_API_KEY
+Memory: 512MB (free tier)
+Deployment: Docker
 ```
 
 ### **Communication Flow:**
 ```
-User Browser → GitHub Pages (Frontend) → Fly.io (Backend) → Groq API
+User Browser → GitHub Pages (Frontend) → Render (Backend) → Groq API + Cohere API
                 ↑                                        ↓
                 ←────────── JSON Response ←──────────────┘
 ```
@@ -375,22 +381,45 @@ const response = await fetch("YOUR_BACKEND_URL", {
 ## 📊 Performance Characteristics
 
 ### **Startup Time:**
-- **Backend**: ~10-15 seconds (model loading)
+- **Backend**: ~5-8 seconds (no local model loading)
 - **Frontend**: Instant (static files)
 
 ### **Response Time:**
-- **Vector Search**: ~100-200ms
+- **Cohere Embeddings**: ~200-400ms
+- **Vector Search**: ~50-100ms
 - **Groq API Call**: ~500-1000ms
 - **Total**: ~1-2 seconds per query
 
 ### **Memory Usage:**
-- **Backend**: ~400-600MB (embeddings + model)
+- **Backend**: ~200-300MB (no local embeddings model)
 - **Frontend**: ~5-10MB (static files)
 
 ### **Scalability:**
 - **Concurrent Users**: Limited by Groq API rate limits
 - **Resume Size**: Handles typical resume PDFs (1-5 pages)
 - **Query Volume**: Depends on Groq API tier
+
+---
+
+## 💬 Conversational AI Features
+
+The chatbot is designed to provide engaging, natural conversations:
+
+### **Response Style:**
+- **Casual Language**: Uses "I've got", "I'm really into", "I love working with"
+- **Concise Format**: Short paragraphs and bullet points for readability
+- **Enthusiastic Tone**: Shows passion without being overly formal
+- **Humble Confidence**: Balanced approach when discussing capabilities
+
+### **AI Parameters:**
+- **Temperature**: 0.8 (more creative and varied responses)
+- **Max Tokens**: 800 (encourages concise answers)
+- **System Prompt**: Detailed guidelines for conversational behavior
+
+### **User Experience:**
+- **Loading Animations**: Smooth UX with spinner and "Bot is thinking..." message
+- **Error Handling**: Graceful error messages with retry capability
+- **Responsive Design**: Works on desktop and mobile devices
 
 ---
 
@@ -429,6 +458,3 @@ const response = await fetch("YOUR_BACKEND_URL", {
 - **Problem**: Can't extract text from PDF
 - **Solution**: Ensure PDF is not image-based or corrupted
 
----
-
-This manual provides a complete understanding of how your resume chatbot system works, from the technical architecture to the user experience flow. The backend hosting is essential because it handles all the complex AI processing that cannot be done in a static frontend environment.

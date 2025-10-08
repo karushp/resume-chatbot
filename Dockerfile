@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application
 COPY backend/ .
 
-# Expose port (Fly.io will set PORT environment variable)
+# Expose port (Render will set PORT environment variable)
 EXPOSE 8080
 
 # Run the application
