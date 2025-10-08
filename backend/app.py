@@ -35,9 +35,9 @@ chunks = splitter.split_text(text)
 
 # --- Step 3: Embed chunks and store in FAISS ---
 embeddings = HuggingFaceEmbeddings(
-                                model_name="sentence-transformers/all-MiniLM-L3-v2",
-                                   model_kwargs={"device": "cpu"}
-                                   )
+    model_name="sentence-transformers/paraphrase-MiniLM-L3-v2",
+    model_kwargs={"device": "cpu"}
+)
 db = FAISS.from_texts(chunks, embeddings)
 
 # --- Step 4: Helper function to call Groq API ---
