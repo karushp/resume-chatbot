@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import PyPDF2
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings import CohereEmbeddings
+from langchain_cohere import CohereEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from dotenv import load_dotenv
