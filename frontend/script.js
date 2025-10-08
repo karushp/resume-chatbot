@@ -31,7 +31,7 @@ async function sendMessage() {
     const loadingId = "loading-" + Date.now();
     chat.innerHTML += `
         <div id="${loadingId}" class="loading-container">
-            <img src="photo.jpeg" alt="Bot" class="loading-avatar">
+            <img src="frontend/photo.jpeg" alt="Bot" class="loading-avatar">
             <div class="loading-bubble">
                 <div class="loading-spinner"></div>
                 <span class="loading-text">🤖 Bot is thinking...</span>
@@ -60,7 +60,7 @@ async function sendMessage() {
         // Add bot response
         chat.innerHTML += `
             <div class="chat-message bot">
-                <img src="photo.jpeg" alt="Bot" class="message-avatar">
+                <img src="frontend/photo.jpeg" alt="Bot" class="message-avatar">
                 <div class="message-bubble bot">${data.answer}</div>
             </div>
         `;
@@ -75,7 +75,7 @@ async function sendMessage() {
         // Add error message
         chat.innerHTML += `
             <div class="chat-message bot">
-                <img src="photo.jpeg" alt="Bot" class="message-avatar">
+                <img src="frontend/photo.jpeg" alt="Bot" class="message-avatar">
                 <div class="message-bubble bot">❌ Sorry, I encountered an error: ${error.message}</div>
             </div>
         `;
