@@ -43,7 +43,7 @@ async function sendMessage() {
     chat.scrollTop = chat.scrollHeight;
     
     try {
-        const response = await fetch("http://localhost:5001/ask", {
+        const response = await fetch("https://resume-chatbot-tpm0.onrender.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: userMessage })

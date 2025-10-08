@@ -34,7 +34,7 @@ splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 chunks = splitter.split_text(text)
 
 # --- Step 3: Embed chunks and store in FAISS ---
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v2")
 db = FAISS.from_texts(chunks, embeddings)
 
 # --- Step 4: Helper function to call Groq API ---
@@ -86,4 +86,5 @@ def ask():
     return jsonify({"answer": answer})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port)
