@@ -30,11 +30,14 @@ with open(RESUME_FILE, "rb") as f:
         text += page.extract_text()
 
 # --- Step 2: Split into chunks ---
-splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=30)
 chunks = splitter.split_text(text)
 
 # --- Step 3: Embed chunks and store in FAISS ---
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v2")
+embeddings = HuggingFaceEmbeddings(
+                                model_name="sentence-transformers/all-MiniLM-L3-v2",
+                                   model_kwargs={"device": "cpu"}
+                                   )
 db = FAISS.from_texts(chunks, embeddings)
 
 # --- Step 4: Helper function to call Groq API ---
