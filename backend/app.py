@@ -4,16 +4,20 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import PyPDF2
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import CohereEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from dotenv import load_dotenv
 load_dotenv()
 
-# Load Groq API key from environment
+# Load API keys from environment
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+
 if not GROQ_API_KEY:
     raise ValueError("Please set the GROQ_API_KEY environment variable.")
+if not COHERE_API_KEY:
+    raise ValueError("Please set the COHERE_API_KEY environment variable.")
 
 # Configuration
 PERSON_NAME = "Karush Pradhan"  # Change this to the person's name
@@ -34,10 +38,7 @@ splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=30)
 chunks = splitter.split_text(text)
 
 # --- Step 3: Embed chunks and store in FAISS ---
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/paraphrase-MiniLM-L3-v2",
-    model_kwargs={"device": "cpu"}
-)
+embeddings = CohereEmbeddings(cohere_api_key=COHERE_API_KEY)
 db = FAISS.from_texts(chunks, embeddings)
 
 # --- Step 4: Helper function to call Groq API ---
