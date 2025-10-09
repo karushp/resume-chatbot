@@ -4,7 +4,7 @@ A conversational AI chatbot that answers questions about my resume. Built with P
 
 🔗 **[Live Demo](https://karushp.github.io/resume-chatbot)**
 
-![Resume Chatbot Interface](img_chatbot.png)
+![Resume Chatbot Interface](img/img_chatbot.png)
 
 ## Features
 
@@ -26,6 +26,14 @@ A conversational AI chatbot that answers questions about my resume. Built with P
 2. System searches through my resume using AI embeddings
 3. Relevant information is sent to Groq's AI model
 4. AI generates a natural, conversational response
+
+## Scalability and Potential
+
+While this chatbot was built around my own resume, the framework is fully adaptable. With minimal modification, it can be applied to:
+
+- **Individual Profiles**: Any person's resume or portfolio, making professional profiles interactive
+- **Company Resources**: Company profiles, product catalogs, or internal documents for conversational information access
+- **Knowledge Bases**: FAQs and documentation, creating dynamic AI-driven support experiences
 
 ---
 
