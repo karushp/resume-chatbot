@@ -42,7 +42,35 @@ embeddings = CohereEmbeddings(
     cohere_api_key=COHERE_API_KEY,
     model="embed-english-v3.0"
 )
-db = FAISS.from_texts(chunks, embeddings)
+
+# Check if we need to rebuild the FAISS index
+FAISS_INDEX_PATH = "faiss_index"
+resume_mtime = os.path.getmtime(RESUME_FILE)
+index_exists = os.path.exists(FAISS_INDEX_PATH)
+
+if index_exists:
+    index_mtime = os.path.getmtime(FAISS_INDEX_PATH)
+    if resume_mtime > index_mtime:
+        print("📄 Resume file updated, rebuilding FAISS index...")
+        db = FAISS.from_texts(chunks, embeddings)
+        db.save_local(FAISS_INDEX_PATH)
+        print("✅ FAISS index rebuilt and saved")
+    else:
+        print("📂 Loading existing FAISS index...")
+        try:
+            db = FAISS.load_local(FAISS_INDEX_PATH, embeddings)
+            print("✅ FAISS index loaded successfully")
+        except Exception as e:
+            print(f"⚠️ Error loading FAISS index: {e}")
+            print("🔄 Rebuilding FAISS index...")
+            db = FAISS.from_texts(chunks, embeddings)
+            db.save_local(FAISS_INDEX_PATH)
+            print("✅ FAISS index rebuilt and saved")
+else:
+    print("🆕 Creating new FAISS index...")
+    db = FAISS.from_texts(chunks, embeddings)
+    db.save_local(FAISS_INDEX_PATH)
+    print("✅ FAISS index created and saved")
 
 # --- Step 4: Helper function to call Groq API ---
 def groq_generate(query, context):
