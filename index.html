@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- Consent Mode default (before gtag.js): analytics denied until the user accepts -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      wait_for_update: 500
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7BR2GLMF08"></script>
+  <script>
+    gtag('js', new Date());
+    gtag('config', 'G-7BR2GLMF08');
+    try {
+      if (localStorage.getItem('cookie_consent') === 'granted') {
+        gtag('consent', 'update', { analytics_storage: 'granted' });
+      }
+    } catch (_) {}
+  </script>
   <title>Resume Chatbot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,13 +40,25 @@
     
     <div id="chat" class="chat-container"></div>
     
-    <p class="tagline">Last updated: March 2026 | <a href="https://github.com/karushp" target="_blank">Github</a></p>
+    <p class="tagline footer-line-1">Last updated: March 2026 | Replies are AI-generated and may be incomplete or inaccurate</p>
+    <p class="tagline footer-line-2"><a href="privacy.html">Privacy policy</a> | <button type="button" class="tagline-link" id="cookie-settings-btn">Cookie settings</button> | <a href="https://github.com/karushp" target="_blank">Github</a></p>
+  </div>
+
+  <div id="cookie-banner" class="cookie-banner" hidden role="dialog" aria-labelledby="cookie-banner-title" aria-live="polite">
+    <div class="cookie-banner-inner">
+      <p id="cookie-banner-title" class="cookie-banner-text">This site uses Google Analytics 4 (cookies) to see how visitors use the page. Declining limits analytics; the chat still works. <a href="privacy.html">Privacy policy</a></p>
+      <div class="cookie-banner-actions">
+        <button type="button" class="cookie-btn cookie-btn-secondary" id="cookie-reject">Decline</button>
+        <button type="button" class="cookie-btn cookie-btn-primary" id="cookie-accept">Accept analytics</button>
+      </div>
+    </div>
   </div>
 
   <!-- Hidden avatar images -->
   <img id="bot-avatar" src="frontend/photo.jpeg" alt="Bot" style="display: none;">
   <div id="user-avatar" style="display: none;"></div>
 
+  <script src="frontend/consent.js"></script>
   <script src="frontend/script.js"></script>
 </body>
 </html>
