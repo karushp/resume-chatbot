@@ -47,12 +47,23 @@ body.legal-body {
 }
 
 .tagline.footer-line-1 {
-  margin-bottom: 0.35rem;
+  margin-bottom: 1.25rem;
 }
 
 .tagline.footer-line-2 {
   margin-top: 0;
   margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  column-gap: 1.75rem;
+  row-gap: 0.5rem;
+}
+
+.tagline.footer-line-2 a,
+.tagline.footer-line-2 .tagline-link {
+  text-decoration: none;
 }
 
 .tagline a {
