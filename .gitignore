@@ -73,6 +73,13 @@ secrets/
 temp/
 tmp/
 
+# Generated vector index (rebuilt on backend startup)
+backend/faiss_index/
+
+# Local caches
+backend/__pycache__/
+**/__pycache__/
+
 # Node.js (if you add any JS tooling later)
 node_modules/
 npm-debug.log*

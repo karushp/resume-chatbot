@@ -5,6 +5,5 @@ flask-cors>=4.0.0
 langchain>=0.3.27
 langchain-community>=0.3.0
 langchain-text-splitters>=0.3.0
-langchain-cohere>=0.1.0
-pypdf2>=3.0.1
+langchain-cohere>=0.4.6
 requests>=2.31.0

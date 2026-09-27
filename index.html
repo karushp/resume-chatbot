@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <!-- Consent Mode default (before gtag.js): analytics denied until the user accepts -->
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -31,16 +32,18 @@
     <h1 class="main-title">Hi, I'm Karush 👋</h1>
         <p class="tagline">actually his bot 🤖 </p>
     
-    <div class="input-container">
-      <input type="text" id="userInput" placeholder="Try asking: What projects has Karush worked on?" onkeypress="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMessage()">
-        <span class="send-icon">↑</span>
+    <form id="chat-form" class="input-container" action="#" method="post">
+      <label class="visually-hidden" for="userInput">Ask about Karush's resume</label>
+      <input type="text" id="userInput" name="query" autocomplete="off" placeholder="Try asking: What projects has Karush worked on?">
+      <button type="submit" class="send-btn" aria-label="Send message">
+        <span class="send-icon" aria-hidden="true">↑</span>
       </button>
-    </div>
+    </form>
     
-    <div id="chat" class="chat-container"></div>
+    <div id="chat" class="chat-container" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <p id="chat-status" class="visually-hidden" aria-live="polite"></p>
     
-    <p class="tagline footer-line-1">Replies are AI-generated and may be incomplete or inaccurate · Updated April 2026</p>
+    <p class="tagline footer-line-1">Replies are AI-generated and may be incomplete or inaccurate · Updated September 2026</p>
     <p class="tagline footer-line-2"><a href="mailto:karushpradhan@gmail.com?subject=Resume%20Chatbot%20inquiry">Contact</a><a href="privacy.html">Privacy policy</a><button type="button" class="tagline-link" id="cookie-settings-btn">Cookie settings</button><a href="https://github.com/karushp" target="_blank">Github</a></p>
   </div>
 

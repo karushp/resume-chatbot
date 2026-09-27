@@ -1,6 +1,6 @@
 # Resume Chatbot
 
-A conversational AI chatbot that answers questions about my resume. Built with Python, Flask, and modern AI APIs.
+Interactive portfolio chatbot that answers questions about my professional background using RAG (markdown resume + embeddings + LLM).
 
 🔗 **[Live Demo](https://karushp.github.io/resume-chatbot)**
 
@@ -8,33 +8,76 @@ A conversational AI chatbot that answers questions about my resume. Built with P
 
 ## Features
 
-- **Conversational AI**: Natural, engaging responses powered by Groq's Llama model
-- **Smart Search**: Uses Cohere embeddings to find relevant resume information
-- **Modern UI**: Clean, responsive chat interface
-- **Fast Performance**: Optimized for quick responses
+- Conversational Q&A over a structured markdown resume
+- Semantic retrieval with Cohere embeddings + FAISS
+- Responses via Groq chat models
+- Chat history (last 4 messages), rate limiting, and safe frontend rendering
+- Cookie consent + privacy policy for analytics
 
 ## Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Python, Flask
-- **AI**: Groq API (Llama 3.1), Cohere Embeddings
-- **Deployment**: GitHub Pages + Render
+| Layer | Stack |
+|---|---|
+| Frontend | HTML, CSS, JavaScript (GitHub Pages) |
+| Backend | Python, Flask (Render) |
+| AI | Groq + Cohere Embeddings + FAISS |
 
-## How It Works
+## Project Structure
 
-1. User asks a question about my experience
-2. System searches through my resume using AI embeddings
-3. Relevant information is sent to Groq's AI model
-4. AI generates a natural, conversational response
+```text
+resume-chatbot/
+├── index.html              # GitHub Pages entry
+├── privacy.html
+├── frontend/               # UI assets (CSS, JS, photo)
+├── backend/
+│   ├── app.py              # Flask API + RAG pipeline
+│   ├── config.py           # Prompt, model, and limits (edit here)
+│   ├── data/karush_resume.md
+│   ├── requirements.txt
+│   └── README.md           # Backend setup details
+├── img/                    # README screenshots
+└── Dockerfile              # Backend container for Render
+```
 
-## Scalability and Potential
+## Quick Start (local)
 
-While this chatbot was built around my own resume, the framework is fully adaptable. With minimal modification, it can be applied to:
+### Backend
 
-- **Individual Profiles**: Any person's resume or portfolio, making professional profiles interactive
-- **Company Resources**: Company profiles, product catalogs, or internal documents for conversational information access
-- **Knowledge Bases**: FAQs and documentation, creating dynamic AI-driven support experiences
+```bash
+cd backend
+cp .env.example .env   # add GROQ_API_KEY and COHERE_API_KEY
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+KMP_DUPLICATE_LIB_OK=TRUE python app.py
+```
+
+API: `http://127.0.0.1:5001/ask`
+
+### Frontend
+
+```bash
+# from repo root
+python -m http.server 8080
+```
+
+Open `http://127.0.0.1:8080` — on localhost the UI calls the local API automatically.
+
+## Configuration
+
+Edit [`backend/config.py`](backend/config.py) for:
+
+- System prompt and personal details
+- Groq model / temperature
+- Retrieval and rate-limit settings
+- Resume markdown path
+
+Resume source of truth: [`backend/data/karush_resume.md`](backend/data/karush_resume.md)
+
+## Deployment
+
+- **Frontend:** GitHub Pages (this repo)
+- **Backend:** Render via `Dockerfile` (set `GROQ_API_KEY` and `COHERE_API_KEY`)
 
 ---
 
-*Built as a portfolio project to showcase AI integration and full-stack development skills.*
+*Portfolio project showcasing RAG, API design, and a polished chat UI.*

@@ -15,6 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application
 COPY backend/ .
 
+# Avoid OpenMP duplicate-lib crashes with FAISS on some hosts
+ENV KMP_DUPLICATE_LIB_OK=TRUE
+ENV OMP_NUM_THREADS=1
+
 # Expose port (Render will set PORT environment variable)
 EXPOSE 8080
 

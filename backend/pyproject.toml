@@ -3,10 +3,9 @@ name = "resume-chatbot"
 version = "0.1.0"
 description = "Backend for the resume chatbot"
 authors = [
-    { name="Karush Pradhan", email="karushpradhan@gmail.com" }
+    { name = "Karush Pradhan", email = "karushpradhan@gmail.com" }
 ]
-license = { file="LICENSE" }
-readme = "README.md"
+license = "MIT"
 requires-python = ">=3.13"
 dependencies = [
     "dotenv>=0.9.9",
@@ -16,11 +15,13 @@ dependencies = [
     "langchain>=0.3.27",
     "langchain-cohere>=0.4.6",
     "langchain-community>=0.3.0",
-    "pypdf2>=3.0.1",
+    "langchain-text-splitters>=0.3.0",
     "requests>=2.31.0",
-    "sentence-transformers>=2.2.2",
-    "torch>=2.0.0",
 ]
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["app", "config"]
